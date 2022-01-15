@@ -649,6 +649,11 @@ public class JavaClass
     }
 
     @PublicAPI(usage = ACCESS)
+    public Set<InstanceofCheck> getInstanceofChecks() {
+        return members.getInstanceofChecks();
+    }
+
+    @PublicAPI(usage = ACCESS)
     public Set<ReferencedClassObject> getReferencedClassObjects() {
         return members.getReferencedClassObjects();
     }

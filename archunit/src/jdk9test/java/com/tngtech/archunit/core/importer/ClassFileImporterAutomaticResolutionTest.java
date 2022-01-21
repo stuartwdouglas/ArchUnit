@@ -22,6 +22,7 @@ import com.tngtech.archunit.core.domain.JavaMethod;
 import com.tngtech.archunit.core.domain.JavaMethodCall;
 import com.tngtech.archunit.core.domain.JavaMethodReference;
 import com.tngtech.archunit.core.domain.ReferencedClassObject;
+import com.tngtech.archunit.core.domain.ThrowsDeclaration;
 import com.tngtech.archunit.core.domain.properties.HasAnnotations;
 import com.tngtech.archunit.core.importer.testexamples.SomeAnnotation;
 import com.tngtech.archunit.core.importer.testexamples.annotatedclassimport.ClassWithUnimportedAnnotation;
@@ -470,6 +471,20 @@ public class ClassFileImporterAutomaticResolutionTest {
 
         assertThat(instanceofCheck.getRawType().isFullyImported()).as("type of instanceof target has been fully imported").isTrue();
         assertThatType(instanceofCheck.getRawType()).matches(String.class);
+    }
+
+    @Test
+    public void automatically_resolves_types_of_throws_declarations() {
+        @SuppressWarnings({"unused", "RedundantThrows"})
+        class Origin {
+            void call() throws InterruptedException {
+            }
+        }
+
+        ThrowsDeclaration<?> throwsDeclaration = getOnlyElement(new ClassFileImporter().importClass(Origin.class).getThrowsDeclarations());
+
+        assertThat(throwsDeclaration.getRawType().isFullyImported()).as("type of throws declaration has been fully imported").isTrue();
+        assertThatType(throwsDeclaration.getRawType()).matches(InterruptedException.class);
     }
 
     @MetaAnnotatedAnnotation
